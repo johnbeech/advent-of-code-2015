@@ -14,15 +14,22 @@ function solve(input) {
     var i = 0;
     var state = initialState();
     var char, modifier;
+    var firstEnteredBasementAt = false;
     while (i < input.length) {
         char = input[i];
         modifier = modifiers[char] || syntaxError(char, i);
         state = modifier(state);
         i++;
+        firstEnteredBasementAt = firstEnteredBasementAt || checkForBasement(state, i);
     }
     console.log('Ups', state.up);
     console.log('Downs', state.down);
     console.log('Final floor', state.floor);
+    console.log('First entered basement at', firstEnteredBasementAt);
+}
+
+function checkForBasement(state, position) {
+    return (state.floor < 0) ? position : false;
 }
 
 function error(ex) {
