@@ -53,13 +53,14 @@ function processInstructions(instructions) {
     var state = initialState();
     instructions.forEach(function(instruction) {
         var action = actions[instruction.action];
+        var start = Date.now();
         action(state.lights, instruction);
+        console.log('Processed instruction', instruction, ((Date.now() - start) / 1000).toFixed(3) + 's');
     });
 
-    return {
-        'Number of instructions': instructions.length,
-        'Lights turned on': countLightsTurnedOn(state.lights)
-    };
+    var summary = summariseLightState(state.lights);
+    summary['Number of instructions'] = instructions.length;
+    return summary;
 }
 
 function initialState() {
@@ -69,15 +70,15 @@ function initialState() {
 }
 
 function toggleLights(lights, range) {
-    changeLights(lights, range, (light) => !light);
+    changeLights(lights, range, (light) => (light || 0) + 2);
 }
 
 function turnOnLights(lights, range) {
-    changeLights(lights, range, (light) => true);
+    changeLights(lights, range, (light) => (light || 0) + 1);
 }
 
 function turnOffLights(lights, range) {
-    changeLights(lights, range, (light) => false);
+    changeLights(lights, range, (light) => Math.max(0, (light || 0) - 1));
 }
 
 function changeLights(lights, range, fn) {
@@ -89,14 +90,19 @@ function changeLights(lights, range, fn) {
     }
 }
 
-function countLightsTurnedOn(lights) {
+function summariseLightState(lights) {
     var count = 0;
+    var brightness = 0;
     Object.keys(lights).forEach(function(key) {
         if (lights[key]) {
             count++;
         };
+        brightness += lights[key];
     });
-    return count;
+    return {
+        'Number of lights on': count,
+        'Total Brightness': brightness
+    };
 }
 
 function report(summary) {
