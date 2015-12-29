@@ -1,8 +1,8 @@
 var read = require('../lib/read');
 
 const modifiers = {
-    '(': moveDown,
-    ')': moveUp
+    '(': moveUp,
+    ')': moveDown
 };
 
 console.log('Day 1');
