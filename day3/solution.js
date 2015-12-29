@@ -9,23 +9,86 @@ const modifiers = {
 
 console.log('Day 3');
 read(__dirname + '/input.txt', 'utf8')
-    .then(solve)
+    .then(solveYear1)
     .then(report)
     .catch(error);
 
-function solve(input) {
-    var state = process(input, modifiers);
-    state.numberOfHousesDeliveredTo = Object.keys(state.houses).length;
+read(__dirname + '/input.txt', 'utf8')
+    .then(solveYear2)
+    .then(report)
+    .catch(error);
+
+function solve(instructions) {
+    return process(instructions, modifiers);
+}
+
+function solveYear1(instructions) {
+    var state = solve(instructions);
+    state.numberOfHousesDeliveredTo = countHousesWithPresents(state);
+    state.title = 'Year 1, Santa and the eggnogged elf';
+    return state;
+}
+
+function solveYear2(instructions) {
+    var state = divideSequence(instructions)
+        .then(function(instructions) {
+            return Promise.all([
+                solve(instructions[0]),
+                solve(instructions[1])
+            ]);
+        })
+        .then(combine)
+        .then(function(state) {
+            state.title = 'Year 2, Santa, Robo-Santa, and the eggnogged elf';
+            return state;
+        });
     return state;
 }
 
 function report(summary) {
+    console.log(summary.title);
     console.log('Number of houses delivered to', summary.numberOfHousesDeliveredTo);
-    console.log('Final position', summary.position.x, ',', summary.position.y)
+    console.log('Final position', summary.position);
+    console.log();
 }
 
 function error(ex) {
     console.log('Error', ex, ex.stack);
+}
+
+function divideSequence(instructions) {
+    var one = [];
+    var two = [];
+    for (var i = 0; i < instructions.length; i++) {
+        var instruction = instructions[i];
+        if (i % 2 == 1) {
+            one.push(instruction);
+        } else {
+            two.push(instruction);
+        }
+    }
+    var sequences = [one.join(''), two.join('')];
+    return Promise.accept(sequences);
+}
+
+function countHousesWithPresents(state) {
+    return Object.keys(state.houses).length;
+}
+
+function combine(states) {
+    var combinedState = {};
+    combinedState.houses = {};
+    states.map(function(state) {
+        Object.keys(state.houses).map(function(coordinate) {
+            combinedState.houses[coordinate] = (combinedState.houses[coordinate] || 0) + state.houses[coordinate];
+        });
+    });
+    combinedState.numberOfHousesDeliveredTo = countHousesWithPresents(combinedState);
+    combinedState.position = {
+        'santa': states[0].position,
+        'robo-santa': states[1].position
+    };
+    return combinedState;
 }
 
 function process(input, actions) {
