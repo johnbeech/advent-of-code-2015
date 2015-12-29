@@ -25,6 +25,7 @@
   "homepage": "https://github.com/Markavian/advent-of-code-solutions#readme",
   "dependencies": {
     "denodeify": "^1.2.1",
+    "md5": "^2.0.0",
     "request": "^2.67.0"
   }
 }
