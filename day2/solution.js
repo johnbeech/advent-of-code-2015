@@ -1,5 +1,6 @@
 var read = require('../lib/read');
 
+console.log('Day 2');
 read(__dirname + '/input.txt', 'utf8')
     .then(solve)
     .catch(error);
