@@ -78,7 +78,6 @@ function volume(w, h, d) {
 }
 
 function report(summary) {
-    console.log('Boxes', summary.boxes);
     console.log('The elves need a total of', summary.areaOfWrappingPaperRequired, 'square feet of wrapping paper, and', summary.ribbonRequired, 'feet of ribbon.');
 }
 
