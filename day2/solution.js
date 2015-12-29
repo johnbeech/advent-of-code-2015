@@ -8,6 +8,7 @@ function solve(input) {
     return split(input)
         .then(parse)
         .then(wrap)
+        .then(ribbon)
         .then(reduce)
         .then(report);
 }
@@ -22,25 +23,42 @@ function parse(lines) {
     return lines.map(function(line) {
         var size = line.split('x')
         return {
-            w: size[0],
-            h: size[1],
-            d: size[2]
+            w: parseFloat(size[0]),
+            h: parseFloat(size[1]),
+            d: parseFloat(size[2])
         };
     });
 }
 
 function wrap(boxes) {
     return boxes.map(function(box) {
-        return surfaceArea(box.w, box.h, box.d) + smallestSide(box.w, box.h, box.d);
+        box.surfaceArea = surfaceArea(box.w, box.h, box.d);
+        box.smallestSide = smallestSide(box.w, box.h, box.d);
+        box.areaOfWrappingPaperRequired = box.surfaceArea + box.smallestSide;
+        return box;
+    });
+}
+
+function ribbon(boxes) {
+    return boxes.map(function(box) {
+        box.smallestPerimeter = smallestPerimeter(box.w, box.h, box.d);
+        box.volume = volume(box.w, box.h, box.d);
+        box.ribbonRequired = box.smallestPerimeter + box.volume;
+        return box;
     });
 }
 
 function reduce(boxes) {
-    var count = 0;
+    var summary = {
+        areaOfWrappingPaperRequired: 0,
+        ribbonRequired: 0,
+        boxes: boxes
+    };
     boxes.forEach(function(box) {
-        count = count + box;
+        summary.areaOfWrappingPaperRequired += box.areaOfWrappingPaperRequired;
+        summary.ribbonRequired += box.ribbonRequired;
     });
-    return count;
+    return summary;
 }
 
 function surfaceArea(w, h, d) {
@@ -51,8 +69,17 @@ function smallestSide(w, h, d) {
     return Math.min(w * h, w * d, h * d);
 }
 
-function report(areaOfWrappingPaperRequired) {
-    console.log('The elves need a total of', areaOfWrappingPaperRequired, 'square feet of wrapping paper.');
+function smallestPerimeter(w, h, d) {
+    return 2 * Math.min(w + h, w + d, h + d);
+}
+
+function volume(w, h, d) {
+    return w * h * d;
+}
+
+function report(summary) {
+    console.log('Boxes', summary.boxes);
+    console.log('The elves need a total of', summary.areaOfWrappingPaperRequired, 'square feet of wrapping paper, and', summary.ribbonRequired, 'feet of ribbon.');
 }
 
 function error(ex) {
