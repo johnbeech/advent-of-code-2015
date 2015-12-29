@@ -1,0 +1,30 @@
+{
+  "name": "advent-of-code-solutions",
+  "version": "1.0.0",
+  "description": "My solutions for Advent of Code http://www.adventofcode.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Markavian/advent-of-code-solutions.git"
+  },
+  "keywords": [
+    "nodejs",
+    "advent",
+    "of",
+    "code",
+    "javascript"
+  ],
+  "author": "Markavian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Markavian/advent-of-code-solutions/issues"
+  },
+  "homepage": "https://github.com/Markavian/advent-of-code-solutions#readme",
+  "dependencies": {
+    "denodeify": "^1.2.1",
+    "request": "^2.67.0"
+  }
+}
