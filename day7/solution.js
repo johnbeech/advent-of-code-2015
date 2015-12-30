@@ -13,7 +13,7 @@ var operators = {
 var report = [];
 console.report = function() {
     var args = Array.prototype.slice.call(arguments);
-    console.log(args.join(' '));
+    //console.log(args.join(' '));
     report.push(args.join(' '));
 };
 
@@ -28,6 +28,9 @@ function solve(input, test) {
         .then(parse)
         .then(processWiringInstructions)
         .then(execute)
+        .then(rewire)
+        .then(execute)
+        .then(writeReport)
         .then(end);
 }
 
@@ -147,6 +150,27 @@ function execute(state) {
         console.report('Solving for', key);
         state.signals[key] = resolveValue(key, state.wires);
     });
+
+    return state;
+}
+
+function rewire(state) {
+    console.report('Rewiring a', state.signals.a, 'on to b', state.signals.b);
+    var val = state.signals.a;
+    state.wires.b = function() {
+        return val;
+    };
+    deleteKeys(state.signals);
+    return state;
+}
+
+function deleteKeys(value) {
+    Object.keys(value).forEach(function(key) {
+        delete value[key];
+    });
+}
+
+function writeReport(state) {
 
     var outputFile = 'day7.json';
     console.log('Writing report to', outputFile);
