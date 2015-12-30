@@ -1,6 +1,8 @@
 var read = require('../lib/read');
 var write = require('../lib/write');
 
+var lowest;
+
 read(__dirname + '/input.txt', 'utf8')
     .then(split)
     .then(parse)
@@ -56,7 +58,7 @@ function solve(locations) {
         return b.travelled - a.travelled;
     });
 
-    return reports;
+    return lowest;
 }
 
 function solveLocation(start, location, locations, list, route, travelled) {
@@ -76,7 +78,11 @@ function solveLocation(start, location, locations, list, route, travelled) {
                 travelled: location[destination].travelled
             };
             reports.push(report);
-            console.log([report.route.join(' -> '), '=', location[destination].travelled].join(' '));
+            lowest = lowest || report;
+            if (report.travelled < lowest.travelled) {
+                console.log([report.route.join(' -> '), '=', location[destination].travelled].join(' '));
+                lowest = report;
+            }
         }
 
         var newReports = solveLocation(destination, location[destination] || {}, locations, list, [].concat(route, [destination]), location[destination].travelled);
