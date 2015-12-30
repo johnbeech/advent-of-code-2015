@@ -1,5 +1,4 @@
 var read = require('../lib/read');
-var write = require('../lib/write');
 
 var lowest;
 
@@ -72,6 +71,10 @@ function solveLocation(start, location, locations, list, route, travelled) {
         location[destination] = location[destination] || {};
         location[destination].travelled = travelled + distance;
 
+        if(lowest && location[destination].travelled > lowest.travelled) {
+            return;
+        }
+
         if (route.length + 1 === list.length) {
             var report = {
                 route: [].concat(route, [destination]),
@@ -94,7 +97,6 @@ function solveLocation(start, location, locations, list, route, travelled) {
 function report(summary) {
     var file = JSON.stringify(summary, null, '  ');
     console.log('Summary:', file);
-    write('day9.json', file);
     return summary;
 }
 
