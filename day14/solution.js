@@ -45,35 +45,53 @@ function index(instructions) {
 
 function solve(index) {
     var names = Object.keys(index);
-    var results = names.map(function(name) {
+    var racers = names.map(function(name) {
         var reindeer = index[name];
-        var racer = race(reindeer, 2503);
+        var racer = {
+            reindeer: reindeer,
+            resting: 0,
+            flying: reindeer.fly.time,
+            distance: 0,
+            graph: '',
+            score: 0
+        };
+
         return racer;
     });
 
-    results.sort(function(a, b) {
+    var time = 2503;
+    while (time > 0) {
+        race(racers);
+        time--;
+    }
+
+    var furthestTravelled = racers.sort(function(a, b) {
         return b.distance - a.distance;
+    })[0];
+
+    var highestScorer = racers.sort(function(a, b) {
+        return b.score - a.score;
+    })[0];
+
+    racer = racers.map(function(racer) {
+        racer.time = racer.graph.length;
+        delete racer.graph;
+        return racer;
     });
 
     return {
         index,
-        results,
-        winner: results[0]
+        racers,
+        highestScorer,
+        furthestTravelled
     };
 }
 
-function race(reindeer, time) {
-    var racer = {
-        reindeer,
-        resting: 0,
-            flying: reindeer.fly.time,
-            distance: 0,
-            graph: ''
-    };
-
-    while (time > 0) {
+function race(racers) {
+    var furthestTravelled = 0;
+    racers.forEach(function(racer) {
         if (racer.flying > 0) {
-            racer.distance = racer.distance + reindeer.fly.speed;
+            racer.distance = racer.distance + racer.reindeer.fly.speed;
             racer.graph += '^';
         } else {
             racer.graph += '-';
@@ -82,25 +100,24 @@ function race(reindeer, time) {
         if (racer.resting > 0) {
             racer.resting--;
             if (racer.resting === 0) {
-                racer.flying = reindeer.fly.time;
+                racer.flying = racer.reindeer.fly.time;
             }
         } else {
             if (racer.flying > 0) {
                 racer.flying--;
             } else {
-                racer.resting = reindeer.rest - 1;
+                racer.resting = racer.reindeer.rest - 1;
             }
         }
-        time--;
-    }
 
-    console.log(reindeer.name, racer.distance, racer.graph);
-    console.log();
+        furthestTravelled = Math.max(furthestTravelled, racer.distance);
+    });
 
-    racer.time = racer.graph.length;
-    delete racer.graph;
-
-    return racer;
+    racers.forEach(function(racer) {
+        if (racer.distance === furthestTravelled) {
+            racer.score++;
+        }
+    });
 }
 
 function report(summary) {
