@@ -10,7 +10,7 @@ function solve(lines) {
 }
 
 function report(summary) {
-    console.log('Summary:', summary);
+    console.log('Summary:', JSON.stringify(summary, null, '  '));
 }
 
 function error(ex) {
