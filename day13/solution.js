@@ -13,7 +13,6 @@ function split(input) {
     return Promise.accept(lines);
 }
 
-
 function parse(lines) {
     var matcher = /([A-z]+) would (gain|lose) ([\d]+) happiness units by sitting next to ([A-z]+)./;
     return lines.map(function(line) {
@@ -28,7 +27,23 @@ function parse(lines) {
 }
 
 function index(instructions) {
-    return instructions
+    var index = {};
+
+    instructions.forEach(function(instruction) {
+        index[instruction.actor] = index[instruction.actor] || {
+            happiness: 0,
+            desired: {},
+            undesired: {}
+        };
+
+        if (instruction.happiness > 0) {
+            index[instruction.actor].desired[instruction.neighbour] = instruction.happiness;
+        } else {
+            index[instruction.actor].undesired[instruction.neighbour] = instruction.happiness;
+        }
+    });
+
+    return index;
 }
 
 function solve(index) {
@@ -36,7 +51,7 @@ function solve(index) {
 }
 
 function report(summary) {
-    console.log('Summary:', summary);
+    console.log('Summary:', JSON.stringify(summary, null, '  '));
 }
 
 function error(ex) {
