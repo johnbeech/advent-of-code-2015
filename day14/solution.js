@@ -1,5 +1,7 @@
 var read = require('../lib/read');
 
+var raceLength = 2503;
+
 read(__dirname + '/input.txt', 'utf8')
     .then(split)
     .then(parse)
@@ -20,10 +22,10 @@ function parse(lines) {
         return {
             reindeer: matches[1],
             fly: {
-                speed: matches[2],
-                time: matches[3]
+                speed: parseInt(matches[2]),
+                time: parseInt(matches[3])
             },
-            rest: matches[4]
+            rest: parseInt(matches[4])
         };
     });
 }
@@ -32,6 +34,7 @@ function index(instructions) {
     var index = {};
     instructions.forEach(function(instruction) {
         index[instruction.reindeer] = {
+            name: instruction.reindeer,
             fly: instruction.fly,
             rest: instruction.rest
         };
@@ -41,10 +44,63 @@ function index(instructions) {
 }
 
 function solve(index) {
-    var report = {
-        index
+    var names = Object.keys(index);
+    var results = names.map(function(name) {
+        var reindeer = index[name];
+        var racer = race(reindeer, 2503);
+        return racer;
+    });
+
+    results.sort(function(a, b) {
+        return b.distance - a.distance;
+    });
+
+    return {
+        index,
+        results,
+        winner: results[0]
     };
-    return report;
+}
+
+function race(reindeer, time) {
+    var racer = {
+        reindeer,
+        resting: 0,
+            flying: reindeer.fly.time,
+            distance: 0,
+            graph: ''
+    };
+
+    while (time > 0) {
+        if (racer.flying > 0) {
+            racer.distance = racer.distance + reindeer.fly.speed;
+            racer.graph += '^';
+        } else {
+            racer.graph += '-';
+        }
+
+        if (racer.resting > 0) {
+            racer.resting--;
+            if (racer.resting === 0) {
+                racer.flying = reindeer.fly.time;
+            }
+        } else {
+            if (racer.flying > 0) {
+                racer.flying--;
+            } else {
+                racer.resting = reindeer.rest - 1;
+            }
+        }
+        time--;
+    }
+
+    console.log(reindeer.name, racer.distance, racer.graph);
+    console.log();
+
+    racer.time = racer.graph.length;
+    delete racer.graph;
+
+    return racer;
 }
 
 function report(summary) {
