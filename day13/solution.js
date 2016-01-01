@@ -8,6 +8,7 @@ read(__dirname + '/input.txt', 'utf8')
     .then(split)
     .then(parse)
     .then(index)
+    .then(addMyself)
     .then(solve)
     .then(report)
     .catch(error);
@@ -48,6 +49,25 @@ function index(instructions) {
         }
         index[instruction.actor].names[instruction.neighbour] = instruction.happiness;
     });
+
+    return index;
+}
+
+function addMyself(index) {
+    var names = Object.keys(index);
+
+    var relations = {};
+    names.forEach(function(name) {
+        relations[name] = 0;
+        index[name].names['Me'] = 0;
+    });
+
+    index['Me'] = {
+        happiness: 0,
+        desired: {},
+        undesired: {},
+        names: relations
+    };
 
     return index;
 }
