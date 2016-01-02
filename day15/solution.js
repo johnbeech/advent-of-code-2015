@@ -49,13 +49,12 @@ function solve(index) {
     var ingredients = Object.keys(index);
     var recipe = makeRecipe(ingredients, teaspoons);
 
-    return [
-        solveFor(recipe, index),
-        solveFor({
-            Butterscotch: 44,
-            Cinnamon: 56
-        }, index)
-    ];
+    var recipes = solveFor(recipe, index, ingredients, []);
+    return {
+        best,
+        steps,
+        winners: recipes.length
+    };
 }
 
 function makeRecipe(ingredients, teaspoons) {
@@ -78,8 +77,63 @@ function makeRecipe(ingredients, teaspoons) {
     return recipe;
 }
 
-function solveFor(recipe, index) {
-    return scoreRecipe(recipe, index);
+var steps = 0;
+var best = {
+    score: 0
+};
+
+function solveFor(recipe, index, ingredients, route) {
+    var results = [];
+
+    var result = scoreRecipe(recipe, index);
+
+    steps++;
+
+    if (result.score > best.score) {
+        best = result;
+        results.push(result);
+
+        ingredients.forEach(function(ingredient) {
+            var moreOfX = tweakRecipe(recipe, ingredient, 1);
+            var moreOfXResults = solveFor(moreOfX, index, ingredients, [].concat(route, ingredient));
+            results = results.concat(moreOfXResults);
+
+            var lessOfX = tweakRecipe(recipe, ingredient, -1);
+            var lessOfXResults = solveFor(lessOfX, index, ingredients, [].concat(route, ingredient));
+            results = results.concat(lessOfXResults);
+        });
+    }
+
+    return results;
+}
+
+function tweakRecipe(recipe, ingredientToTweak, amount) {
+    var teaspoons = 0;
+    var ingredients = Object.keys(recipe);
+    ingredients.forEach(function(ingredient) {
+        teaspoons = teaspoons + recipe[ingredient];
+    });
+
+    var take = (function() {
+        var remaining = teaspoons;
+        return function(requestedAmount) {
+            var availableAmount = Math.min(requestedAmount, remaining);
+            remaining = remaining - availableAmount;
+            return availableAmount;
+        }
+    })();
+
+    var tweakedRecipe = {};
+    var tweakedPortion = Math.max(0, recipe[ingredientToTweak] + amount);
+    tweakedRecipe[ingredientToTweak] = take(tweakedPortion);
+
+    ingredients.forEach(function(ingredient) {
+        if (ingredient !== ingredientToTweak) {
+            tweakedRecipe[ingredient] = take(recipe[ingredient]);
+        }
+    });
+
+    return tweakedRecipe;
 }
 
 function scoreRecipe(recipe, index) {
