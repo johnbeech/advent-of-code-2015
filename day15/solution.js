@@ -13,17 +13,20 @@ function split(input) {
 }
 
 function parse(lines) {
-    var matcher = /([A-z]+): ([a-z]+) ([-\d]+), ([a-z]+) ([-\d]+), ([a-z]+) ([-\d]+), ([a-z]+) ([-\d]+), ([a-z]+) ([-\d]+)/;
+    var matcher = /([A-z]+): (.*)/;
     return lines.map(function(line) {
         var matches = line.match(matcher);
         var ingredient = {
             name: matches[1],
         };
-        ingredient[matches[2]] = parseInt(matches[3]);
-        ingredient[matches[4]] = parseInt(matches[5]);
-        ingredient[matches[6]] = parseInt(matches[7]);
-        ingredient[matches[8]] = parseInt(matches[9]);
-        ingredient[matches[10]] = parseInt(matches[11]);
+        var properties = matches[2].split(', ');
+        properties.forEach(function(property) {
+            console.log(ingredient.name, property);
+            var s = property.split(' ');
+            var key = s[0];
+            var value = parseInt(s[1]);
+            ingredient[key] = value;
+        });
         return ingredient;
     });
 }
