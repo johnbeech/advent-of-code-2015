@@ -6,7 +6,8 @@ read(__dirname + '/input.txt', 'utf8')
     .catch(error);
 
 function solve(input) {
-    for (var i = 0; i < 40; i++) {
+    input = input.trim()
+    for (var i = 0; i < 50; i++) {
         input = lookAndSay(input);
     }
     return {
