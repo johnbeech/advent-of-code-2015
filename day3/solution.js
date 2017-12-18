@@ -19,7 +19,7 @@ read(__dirname + '/input.txt', 'utf8')
     .catch(error);
 
 function solve(instructions) {
-    return process(instructions, modifiers);
+    return process(instructions.trim(), modifiers);
 }
 
 function solveYear1(instructions) {
@@ -68,7 +68,7 @@ function divideSequence(instructions) {
         }
     }
     var sequences = [one.join(''), two.join('')];
-    return Promise.accept(sequences);
+    return Promise.resolve(sequences);
 }
 
 function countHousesWithPresents(state) {
