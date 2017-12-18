@@ -1,3 +1,14 @@
-# Advent of Code Solutions
+# Advent of Code 2015
 
-My working code for [Advent of Code](http://www.adventofcode.com/).
+My solutions for Advent of Code 2015.
+
+## Setup
+
+Clone this repo, then run `npm install` to install dependencies.
+
+## Running
+
+To run a solution by day, use:
+```
+node dayX/solution.js
+````
