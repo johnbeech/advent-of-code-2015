@@ -26,7 +26,7 @@ if (niceTest('ugknbfddgicrmopn') && niceTest('aaa') && !niceTest('jchzalrnumimnm
 
 function solveWith(test) {
     return function(input) {
-        solve(input, test);
+        solve(input.trim(), test);
     }
 }
 
@@ -38,7 +38,7 @@ function solve(input, test) {
 
 function split(input) {
     var lines = input.replace(/\r/g, '').split('\n');
-    return Promise.accept(lines);
+    return Promise.resolve(lines);
 }
 
 function naughtyOrNice(test) {
