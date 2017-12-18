@@ -11,6 +11,7 @@ read(__dirname + '/input.txt', 'utf8')
     .catch(error);
 
 function solve(input) {
+    input = input.trim()
     var i = 0;
     var state = initialState();
     var char, modifier;
