@@ -28,15 +28,20 @@ function solve(input, test) {
         .then(parse)
         .then(processWiringInstructions)
         .then(execute)
+        .then(writeReportPart1)
+        .then(() => split(input))
+        .then(parse)
+        .then(processWiringInstructions)
+        .then(execute)
         .then(rewire)
         .then(execute)
-        .then(writeReport)
+        .then(writeReportPart2)
         .then(end);
 }
 
 function split(input) {
-    var lines = input.replace(/\r/g, '').split('\n');
-    return Promise.accept(lines);
+    var lines = input.trim().replace(/\r/g, '').split('\n');
+    return Promise.resolve(lines);
 }
 
 function parse(lines) {
@@ -97,7 +102,7 @@ function resolveValue(input, wires) {
 }
 
 function resolveOperation(inputValue, operation, state) {
-    var operator = operators[operation.operator] || () => 0;
+    var operator = operators[operation.operator] || (() => 0);
     console.report('', 'Resolving', inputValue, operation.operator, operation.value);
     return operator(inputValue, operation.value, state.wires);
 }
@@ -170,9 +175,17 @@ function deleteKeys(value) {
     });
 }
 
-function writeReport(state) {
+function writeReportPart1(state) {
+  return writeReport(state, 'part1')
+}
 
-    var outputFile = 'day7.json';
+function writeReportPart2(state) {
+  return writeReport(state, 'part2')
+}
+
+function writeReport(state, suffix) {
+
+    var outputFile = __dirname + `/day7_${suffix}.json`;
     console.log('Writing report to', outputFile);
 
     return write(outputFile, JSON.stringify({
