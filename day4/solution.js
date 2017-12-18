@@ -34,7 +34,7 @@ function generatePattern(length, char) {
 }
 
 function solve(input, pattern) {
-    var secret = input;
+    var secret = input.trim();
     var number = 0;
     while (test(secret, number, pattern) == false) {
         number++;
