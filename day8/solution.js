@@ -22,8 +22,8 @@ function part2() {
 }
 
 function split(input) {
-    var lines = input.replace(/\r/g, '').split('\n');
-    return Promise.accept(lines);
+    var lines = input.trim().replace(/\r/g, '').split('\n');
+    return Promise.resolve(lines);
 }
 
 function solve(lines) {
