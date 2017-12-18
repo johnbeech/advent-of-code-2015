@@ -1,27 +1,47 @@
 var read = require('../lib/read');
 
-var actions = {
-    'toggle': toggleLights,
-    'turn on': turnOnLights,
-    'turn off': turnOffLights
-};
-
 console.log('Day 6');
 
-read(__dirname + '/input.txt', 'utf8')
-    .then(solve)
-    .catch(error);
+const part1 = {
+    'toggle': (lights, range) => {
+        changeLights(lights, range, (light) => light + 2);
+    },
+    'turn on': (lights, range) => {
+        changeLights(lights, range, (light) => light + 1);
+    },
+    'turn off': (lights, range) => {
+        changeLights(lights, range, (light) => Math.max(0, light - 1));
+    }
+}
 
-function solve(input, test) {
-    return split(input)
+const part2 = {
+  'toggle': (lights, range) => {
+      changeLights(lights, range, (light) => Math.abs(light - 1));
+  },
+  'turn on': (lights, range) => {
+      changeLights(lights, range, (light) => 1);
+  },
+  'turn off': (lights, range) => {
+      changeLights(lights, range, (light) => 0);
+  }
+}
+
+Promise.all([
+  read(__dirname + '/input.txt', 'utf8').then(input => solve(input, part1)),
+  read(__dirname + '/input.txt', 'utf8').then(input => solve(input, part2))
+])
+.then(results => results.map(report))
+.catch(error);
+
+function solve(input, actions) {
+    return split(input.trim())
         .then(parse)
-        .then(processInstructions)
-        .then(report);
+        .then(n => processInstructions(n, actions))
 }
 
 function split(input) {
     var lines = input.replace(/\r/g, '').split('\n');
-    return Promise.accept(lines);
+    return Promise.resolve(lines);
 }
 
 function parse(lines) {
@@ -49,7 +69,7 @@ function mapInstruction(matches) {
     };
 }
 
-function processInstructions(instructions) {
+function processInstructions(instructions, actions) {
     var state = initialState();
     instructions.forEach(function(instruction) {
         var action = actions[instruction.action];
@@ -69,23 +89,11 @@ function initialState() {
     };
 }
 
-function toggleLights(lights, range) {
-    changeLights(lights, range, (light) => (light || 0) + 2);
-}
-
-function turnOnLights(lights, range) {
-    changeLights(lights, range, (light) => (light || 0) + 1);
-}
-
-function turnOffLights(lights, range) {
-    changeLights(lights, range, (light) => Math.max(0, (light || 0) - 1));
-}
-
 function changeLights(lights, range, fn) {
     for (var j = range.bottom; j <= range.top; j++) {
         for (var i = range.left; i <= range.right; i++) {
             var key = i + ':' + j;
-            lights[key] = fn(lights[key]);
+            lights[key] = fn(lights[key] || 0);
         }
     }
 }
