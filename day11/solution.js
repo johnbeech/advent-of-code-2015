@@ -4,16 +4,18 @@ var allowedCharacters = 'abcdefghjkmnpqrstuvwxyz'.split('');
 
 if (testForPairs(numerize('xxyy')) && testForPairs(numerize('abbcvvx')) && testForIncreasingStraight(numerize('abc')) && testForIncreasingStraight(numerize('ggrjfxyza'))) {
     read(__dirname + '/input.txt', 'utf8')
-        .then(numerize)
-        .then(solve)
-        .then(report)
+        .then(n => n.trim())
+        .then(n => n.split('\n'))
+        .then(n => n.map(numerize))
+        .then(n => n.map(solve))
+        .then(n => n.map(report))
         .catch(error);
 } else {
     console.log('Failed startup tests');
 }
 
 function numerize(string) {
-    var letters = string.split('');
+    var letters = string.trim().split('');
     return convertLettersToNumbers(letters);
 }
 
