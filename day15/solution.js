@@ -11,8 +11,8 @@ read(__dirname + '/input.txt', 'utf8')
     .catch(error);
 
 function split(input) {
-    var lines = input.replace(/\r/g, '').split('\n');
-    return Promise.accept(lines);
+    var lines = input.trim().replace(/\r/g, '').split('\n');
+    return Promise.resolve(lines);
 }
 
 function parse(lines) {
@@ -82,6 +82,7 @@ var best = {
     score: 0
 };
 
+const fiveHundreds = []
 function solveFor(recipe, index, ingredients, route) {
     var results = [];
 
@@ -91,7 +92,9 @@ function solveFor(recipe, index, ingredients, route) {
 
     if (result.score > best.score) {
         best = result;
-        results.push(result);
+        if(result.properties.calories === 500) {
+          fiveHundreds.push(result);
+        }
 
         ingredients.forEach(function(ingredient) {
             var moreOfX = tweakRecipe(recipe, ingredient, 1);
@@ -154,12 +157,13 @@ function scoreRecipe(recipe, index) {
         properties[property] = Math.max(0, properties[property]);
     });
 
-    result.score = properties.capacity * properties.durability * properties.flavor * properties.texture;
+    result.score = properties.capacity * properties.durability * properties.flavor * properties.texture
 
     return result;
 }
 
 function report(summary) {
+    console.log('Five Hundreds', fiveHundreds)
     console.log('Summary:', JSON.stringify(summary, null, '  '));
 }
 
