@@ -10,8 +10,21 @@ Clone this repo, then run `npm install` to install dependencies.
 
 To run a solution by day, use:
 ```
-node dayX/solution.js
+npm start day1
 ````
+
+## New solutions
+
+To create a new solution, run:
+
+```
+npm run create day5
+```
+
+This will not overwrite existing solutions.
+
+Populate `input.txt` with your solution input, and then start implementing your solution in the 2017 folder.
+
 
 ## Account Merging
 
