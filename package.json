@@ -4,7 +4,10 @@
   "description": "My solutions for Advent of Code http://www.adventofcode.com",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run test && node run.js",
+    "test": "npm run lint",
+    "create": "./copy-template.sh",
+    "lint": "standard --fix"
   },
   "repository": {
     "type": "git",
