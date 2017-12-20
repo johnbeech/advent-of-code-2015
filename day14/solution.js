@@ -11,8 +11,8 @@ read(__dirname + '/input.txt', 'utf8')
     .catch(error);
 
 function split(input) {
-    var lines = input.replace(/\r/g, '').split('\n');
-    return Promise.accept(lines);
+    var lines = input.trim().replace(/\r/g, '').split('\n');
+    return Promise.resolve(lines);
 }
 
 function parse(lines) {
